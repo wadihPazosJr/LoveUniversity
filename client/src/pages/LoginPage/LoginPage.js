@@ -2,6 +2,7 @@ import Button from "react-bootstrap/Button";
 import { useState } from "react";
 import Form from "react-bootstrap/Form";
 import "./LoginPage.css";
+import Image from "react-bootstrap/Image";
 
 function LoginPage(props) {
   const [email, setEmail] = useState("");
@@ -16,46 +17,54 @@ function LoginPage(props) {
   };
 
   return (
-    <div className="container">
-      <h1>LOGIN PAGE</h1>
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="my-1" size="lg" controlId="email">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
-            className="w-50"
-            autoFocus
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </Form.Group>
-        <Form.Group className="my-1" size="lg" controlId="password">
-          <Form.Label>Password</Form.Label>
-          <Form.Control
-            className="w-50"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </Form.Group>
-        <Button
-          className="my-1"
-          block
-          size="lg"
-          type="submit"
-          disabled={!validateForm()}
-        >
-          Login
-        </Button>
-      </Form>
-      <button
-        className="my-1"
-        block
-        size="lg"
-        onClick={(window.location.href = "http://localhost:5000/auth/google")}
-      >
-        Login with Google
-      </button>
+    <div className="loginPageTop">
+      <img src="./images/loveUniLogo.png" alt="logo" />
+      <div className="loginContainer d-flex justify-content-center align-items-center">
+        <div className="card">
+          <h1>Login</h1>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mt-3" size="lg" controlId="email">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                className=""
+                autoFocus
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </Form.Group>
+            <Form.Group className="mt-3" size="lg" controlId="password">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                className=""
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </Form.Group>
+            <Button
+              className="w-100 mt-3"
+              block
+              size="sm"
+              type="submit"
+              disabled={!validateForm()}
+            >
+              Login
+            </Button>
+          </Form>
+          <p className="text-center my-2">or</p>
+          <Button
+            className=""
+            block
+            size="sm"
+            onClick={() =>
+              (window.location.href = "http://localhost:5000/auth/google")
+            }
+          >
+            Log in with Google
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

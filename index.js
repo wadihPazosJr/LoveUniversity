@@ -59,47 +59,31 @@ const findOrCreateUser = async (profile) => {
   //If they do exist, then just return the user.
 };
 
-/* const isLoggedIn = (req, res, next) => {
-  console.log(`req.user: ${req.user}`);
-  console.log(req.path);
+const findUserById = async (id) => {
+  console.log(id);
+  let searchResult = await userCollection.findOne({ _id: id });
+  console.log(searchResult);
 
-  if (
-    (req.user !== undefined && req.user.email !== "User not found") ||
-    (req.path === "/constituent/family" && req.method === "POST") ||
-    req.path === "/constituent/constituentFromEmail" ||
-    req.path === "/auth/google" ||
-    req.path === "/auth/google/callback" ||
-    req.path === "/logout" ||
-    req.path === "/auth/facebook" ||
-    req.path === "/auth/facebook/callback" ||
-    req.path === "/" ||
-    req.path === "/constituent/socialWorker/create" ||
-    req.path === "/auth/microsoft" ||
-    req.path === "/auth/microsoft/callback" ||
-    req.path === "/constituent/constituentExists" ||
-    req.path === "/test"
-  ) {
-    next();
+  if (searchResult) {
+    searchResult.exists = true;
+    return searchResult;
   } else {
-    console.log("hitting redirect");
-    if (req.user !== undefined && req.user.email === "User not found") {
-      req.logout();
-    }
-    res.send({
-      redirect: "http://localhost:3000/",
-      message: "You must log in to use this service",
-    });
+    return { exists: false };
   }
-}; */
+};
+
+//A function that checks whether a user is logged in or not, shouldn't be able to access pages if they aren't except exceptions`
+
+//THE COLLECTION SHOULDN'T ONLY BE CMU IT SHOULD BE BASED OFF SCHOOL, IF THE COLLECTION DOESN"T EXIST, IT SHOULD CREATE IT!!!.
 
 //Middleware
 
-passport.serializeUser((user, done) => {
-  console.log("Serializing user..." + JSON.stringify(user));
-  done(null, user);
+passport.serializeUser(function (user, done) {
+  done(null, user._id);
 });
 
-passport.deserializeUser(async (user, done) => {
+passport.deserializeUser(function (id, done) {
+  let user = findUserById(id);
   done(null, user);
 });
 
