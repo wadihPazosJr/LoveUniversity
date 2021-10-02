@@ -20,6 +20,10 @@ client.connect((err) => {
 
 console.log("Connected to MongoDB!");
 
+app.get("/currentUser", (req, res) => {
+  res.send(req.user);
+});
+
 app.post("/create", (req, res) => {
   let body = req.body;
 
@@ -63,13 +67,11 @@ app.post("/create", (req, res) => {
 });
 
 //Update the user.
-//NEEDS REVIEW
-app.patch("/update", (req, res) => {
+//NEEDS REVIEW FIX THIS
+app.patch("/update", async (req, res) => {
   try {
-    db.collection.findOneAndReplace(
-      { user_id: req.user._id },
-      { user: req.user }
-    );
+    await db.collection.findOneAndReplace({ _id: req.user._id }, req.body);
+    res.send({ success: true });
   } catch (err) {
     console.log(err);
     res.send({
@@ -186,6 +188,8 @@ app.get("/top10", async (req, res) => {
     let newPotentialMatchesScoresSorted = newPotentialMatches
       ? assignScoresAndSort(newPotentialMatches)
       : [];
+
+    //Search for the element with the same id, and remove it so you don't always show up fist.
 
     let newPotentialLength = newPotentialMatchesScoresSorted.length;
 

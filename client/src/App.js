@@ -4,6 +4,8 @@ import { BrowserRouter, Route } from "react-router-dom";
 // import { useState } from "react";
 import LoginPage from "./pages/LoginPage/LoginPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import PlanBRegisterPage from "./pages/PlanBRegisterPage/PlanBRegisterPage";
+import ProfilePage from "./pages/ProfilePage/ProfilePage";
 // import SwipePage from "./pages/SwipePage/SwipePage";
 
 function App() {
@@ -19,7 +21,10 @@ function App() {
         <LoginPage />
       </Route>
       <Route path="/register">
-        <RegisterPage />
+        <PlanBRegisterPage />
+      </Route>
+      <Route path="/profile">
+        <ProfilePage />
       </Route>
     </BrowserRouter>
   );

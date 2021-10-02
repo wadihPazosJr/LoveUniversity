@@ -25,13 +25,17 @@ const calculateBioScore = (string1, string2) => {
   let list1 = string1.split(" ");
   let list2 = string2.split(" ");
   let counter = 0;
-  let totalScore = 0;
+  let total = 0;
   for (i = 0; i < list1.length; i++) {
     for (j = 0; j < list2.length; j++) {
       counter = 0;
       while (list1[i] == list2[j]) {
         counter++;
         i++;
+        j++;
+        if (i >= list1.length || j >= list2.length) {
+          break;
+        }
       }
       //Summation of the number of elements which are the same
       for (i = 0; i < counter; i++) {
@@ -39,6 +43,7 @@ const calculateBioScore = (string1, string2) => {
       }
     }
   }
+  return total;
 };
 
 const assignScoresAndSort = (
@@ -49,7 +54,30 @@ const assignScoresAndSort = (
   bio,
   major
 ) => {
-  arrayOfPeople.forEach((person) => {});
+  arrayOfPeople.forEach((p1) => {
+    arrayOfPeople.forEach((p2) => {
+      if (p1 != p2) {
+        let compatabilityScore = 0;
+        compatabilityScore += calculateHobbiesOrActivitiesScore(
+          p1.datingInfo.hobbies,
+          p2.datingInfo.hobbies
+        );
+        compatabilityScore += calculateHobbiesOrActivitiesScore(
+          p1.schoolInfo.activities,
+          p2.schoolInfo.activities
+        );
+        compatabilityScore += calculateAgeScore(
+          p1.datingInfo.age,
+          p2.datingInfo.age
+        );
+        compatabilityScore += calculateBioScore(
+          p1.datingInfo.bio,
+          p2.datingInfo.bio
+        );
+        p2.compatabilityScore = compatabilityScore;
+      }
+    });
+  });
 };
 
 module.exports = { assignScoresAndSort };

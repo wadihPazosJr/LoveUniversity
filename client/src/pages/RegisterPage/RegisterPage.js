@@ -4,14 +4,15 @@ import SchoolInfo from "../../components/SchoolInfo/SchoolInfo";
 import DatingInfo from "../../components/DatingInfo/DatingInfo";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import Button from "react-bootstrap/Button";
 
-async function RegisterPage(props) {
+function RegisterPage(props) {
   const [values, setValues] = useState({
     step: 1,
     name: "",
     email: "",
     phone: "",
-    university: "",
+    university: "cmu",
     major: "",
     greek: "",
     hobbies: [],
@@ -32,8 +33,13 @@ async function RegisterPage(props) {
   };
 
   const handleChange = (input) => (e) => {
+    console.log(input);
+    console.log(e);
+
     setValues({ [input]: e.target.value });
   };
+
+  const handleSubmit = () => {};
 
   switch (values.step) {
     case 1:
@@ -55,20 +61,17 @@ async function RegisterPage(props) {
       );
     case 3:
       return (
-        <DatingInfo
-          prevStep={prevStep}
-          nextStep={nextStep}
-          handleChange={handleChange}
-          values={values}
-        />
+        <div>
+          <DatingInfo
+            prevStep={prevStep}
+            nextStep={nextStep}
+            handleChange={handleChange}
+            values={values}
+          />
+          <Button onClick={handleSubmit}>Submit</Button>
+        </div>
       );
     default:
-      try {
-        await axios.post("/user/create", values);
-        Link();
-      } catch (error) {
-        console.error(error);
-      }
   }
 }
 

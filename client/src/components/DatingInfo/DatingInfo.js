@@ -2,6 +2,7 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
+import Multiselect from "multiselect-react-dropdown";
 
 const DatingInfo = ({ prevStep, nextStep, handleChange, values }) => {
   const hobbies = [
@@ -184,19 +185,25 @@ const DatingInfo = ({ prevStep, nextStep, handleChange, values }) => {
     prevStep();
   };
 
+  const onSelect = (e) => {
+    values.hobbies.push(e.target.value);
+  };
+
+  const onRemove = (e) => {
+    const index = values.hobbies.indexOf(e.target.value);
+    values.hobbies.splice(index, 1);
+  };
+
   return (
     <div>
       <Form>
         <Form.Group className="mb-3" controlId="hobbies">
-          <Form.Label>Hobbies</Form.Label>
-          {hobbies.map((el, i) => (
-            <Form.Check
-              onChange={handleChange("hobbies")}
-              type="checkbox"
-              key={i}
-              label={el}
-            />
-          ))}
+          <Multiselect
+            options={hobbies}
+            onSelect={onSelect}
+            onRemove={onRemove}
+            displayValue="name"
+          />
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="bio">
@@ -239,7 +246,6 @@ const DatingInfo = ({ prevStep, nextStep, handleChange, values }) => {
       </Form>
 
       <Button onClick={previous}>Previous</Button>
-      <Button onClick={next}>Continue</Button>
     </div>
   );
 };
