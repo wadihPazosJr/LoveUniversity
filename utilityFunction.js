@@ -75,9 +75,13 @@ const assignScoresAndSort = (
           p2.datingInfo.bio
         );
         p2.compatabilityScore = compatabilityScore;
+        arrayOfPeople.sort(
+          (p1, p2) => p1.compatabilityScore - p2.compatabilityScore
+        );
       }
     });
   });
+  return arrayOfPeople;
 };
 
 module.exports = { assignScoresAndSort };

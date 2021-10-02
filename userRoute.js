@@ -4,6 +4,7 @@ const app = express();
 let userCollection;
 
 const { MongoClient } = require("mongodb");
+let ObjectID = require("mongodb").ObjectID;
 const MONGO_URI = process.env.MONGO_URI;
 console.log(MONGO_URI);
 
@@ -21,15 +22,18 @@ client.connect((err) => {
 console.log("Connected to MongoDB!");
 
 app.get("/currentUser", (req, res) => {
+  console.log("hit this");
+  console.log(req.user);
   res.send(req.user);
 });
 
-app.post("/create", (req, res) => {
+//Dis call works
+app.post("/create", async (req, res) => {
   let body = req.body;
 
   try {
-    let result = userCollection.findOne({
-      contactInfo: { email: profile._json.email },
+    let result = await userCollection.findOne({
+      "contactInfo.email": body.contactInfo.email,
     });
     if (!result) {
       userCollection.insertOne({
@@ -41,17 +45,15 @@ app.post("/create", (req, res) => {
         schoolInfo: {
           university: body.schoolInfo.university,
           major: body.schoolInfo.major,
-          activities: body.schoolInfo.activities,
           greek: body.schoolInfo.greek,
         },
         datingInfo: {
-          elo: 1000,
-          swipes: 0,
           hobbies: body.datingInfo.hobbies,
           bio: body.datingInfo.bio,
           orientation: body.datingInfo.orientation,
           age: body.datingInfo.age,
           dob: body.datingInfo.dob,
+          gender: body.datingInfo.gender,
           activeMatches: [],
           rightSwipes: [],
           previousUsers: [],
@@ -68,9 +70,12 @@ app.post("/create", (req, res) => {
 
 //Update the user.
 //NEEDS REVIEW FIX THIS
-app.patch("/update", async (req, res) => {
+app.put("/update", async (req, res) => {
   try {
-    await db.collection.findOneAndReplace({ _id: req.user._id }, req.body);
+    await db.collection.findOneAndReplace(
+      { _id: new ObjectID(req.user._id) },
+      req.body
+    );
     res.send({ success: true });
   } catch (err) {
     console.log(err);
@@ -81,7 +86,7 @@ app.patch("/update", async (req, res) => {
 });
 
 //swipe
-app.patch("/swipe", (req, res) => {
+app.put("/swipe", async (req, res) => {
   //assign to variables whether it was a left or right swipe, and get the id of the swiper and the swiped
   //If it was a right swipe, check if the other person already swiped right. if they did,
   //Then it should be taken off potential matches, moved to matches. and put on list of previous matches.
@@ -146,10 +151,9 @@ app.get("/top10", async (req, res) => {
     let top10 = [];
 
     //Get people who have potential matches with said person. 5
+
     const potentialMatchResults = await userCollection.find({
-      datingInfo: {
-        rightSwipes: { $in: [userId] },
-      },
+      "datingInfo.rightSwipes": { $in: [userId] },
     });
 
     let potentialLength = potentialMatchResults
@@ -179,7 +183,7 @@ app.get("/top10", async (req, res) => {
       newPotentialMatches = userCollection.find();
     } else {
       newPotentialMatches = userCollection.find({
-        datingInfo: { orientation: req.user.datingInfo.orientation },
+        "datingInfo.orientation": req.user.datingInfo.orientation,
       });
     }
 
@@ -193,13 +197,39 @@ app.get("/top10", async (req, res) => {
 
     let newPotentialLength = newPotentialMatchesScoresSorted.length;
 
-    let index2 = 0;
-    let index3 = 0;
-    while (index2 < numOfElementsLeft && index3 < newPotentialLength) {
-      top10.push(newPotentialMatchesScoresSorted[index3]);
-      index2++;
-      index3++;
+    //Finds a users desired gender and sexual orientation
+    let userOrientation = req.user.orientation;
+    let userTargetGender = "both";
+    let userTargetOrientation = "both";
+    if (userOrientation === "homosexual") {
+      userTargetOrientation = userOrientation;
+      userTargetGender = req.user.gender;
     }
+    if (userOrientation === "heterosexual") {
+      userTargetOrientation = "heterosexual";
+      if (req.user.datingInfo.gender === "male") {
+        userTargetGender = "female";
+      } else if (req.user.datingInfo.gender === "female") {
+        userTargetGender = "male";
+      }
+      if (userOrientation === "bisexual") {
+        //ADD FOR BISEXUAL DESIRED ORIENTATION AND GENDER
+      }
+    }
+
+    //Removes all users who dont match the target gender and sexual orientation
+    newPotentialMatchesScoresSorted.forEach((person) => {
+      if (person.datingInfo.gender != userTargetGender) {
+        newPotentialMatchesScoresSorted.splice();
+      }
+    });
+    // let index2 = 0;
+    // let index3 = 0;
+    // while (index2 < numOfElementsLeft && index3 < newPotentialLength) {
+    //   top10.push(newPotentialMatchesScoresSorted[index3]);
+    //   index2++;
+    //   index3++;
+    // }
 
     res.send({ success: true, top10 });
   } catch (err) {

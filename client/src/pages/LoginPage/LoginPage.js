@@ -18,7 +18,7 @@ function LoginPage(props) {
 
   return (
     <div className="loginPageTop">
-      <img src="./images/loveUniLogo.png" alt="logo" />
+      {/* <img src="./images/loveUniLogo.png" alt="logo" /> */}
       <div className="loginContainer d-flex justify-content-center align-items-center">
         <div className="card">
           <h1>Login</h1>
@@ -47,6 +47,7 @@ function LoginPage(props) {
               block
               size="sm"
               type="submit"
+              variant="danger"
               disabled={!validateForm()}
             >
               Login
@@ -57,6 +58,7 @@ function LoginPage(props) {
             className=""
             block
             size="sm"
+            variant="danger"
             onClick={() =>
               (window.location.href = "http://localhost:5000/auth/google")
             }

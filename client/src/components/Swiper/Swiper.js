@@ -2,6 +2,13 @@ function Swiper(props) {
   const listActivitiesOrHobbies = (arr) => {
     let returnVal = "";
     arr.forEach((word) => (returnVal += `${word}, `));
+    for (let i = 0; i < arr.length; i++) {
+      if (i !== arr.length - 1) {
+        returnVal += `${arr[i]}, `;
+      } else {
+        returnVal += arr[i];
+      }
+    }
     return returnVal;
   };
 

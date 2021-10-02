@@ -9,9 +9,12 @@ const PORT = process.env.PORT || 5000;
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth").OAuth2Strategy;
 const cookieSession = require("cookie-session");
+const session = require("express-session");
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+
+let ObjectID = require("mongodb").ObjectID;
 
 const userRoute = require("./userRoute.js");
 
@@ -42,7 +45,7 @@ const findOrCreateUser = async (profile) => {
   console.log(profile);
   console.log(profile._json.email);
   let searchResult = await userCollection.findOne({
-    contactInfo: { email: profile._json.email },
+    "contactInfo.email": profile._json.email,
   });
   //Search the database, and see if they exist within the db
   //If they don't create a new entry in the database, with their email, and have a value that says that they are new
@@ -61,7 +64,9 @@ const findOrCreateUser = async (profile) => {
 
 const findUserById = async (id) => {
   console.log(id);
-  let searchResult = await userCollection.findOne({ _id: id });
+  let searchResult = await userCollection.findOne({
+    _id: new ObjectID(id),
+  });
   console.log(searchResult);
 
   if (searchResult) {
@@ -72,18 +77,44 @@ const findUserById = async (id) => {
   }
 };
 
+const corsOptions = {
+  crendentials: true,
+  origin: (origin, callback) => {
+    return callback(null, true);
+  },
+};
+
+const isLoggedIn = (req, res, next) => {
+  console.log(`req.user: ${req.user}`);
+  console.log(req.path);
+
+  if (req.user || req.path === "/login" || req.path === "/register") {
+    next();
+  } else {
+    res.redirect("/login");
+  }
+};
+
 //A function that checks whether a user is logged in or not, shouldn't be able to access pages if they aren't except exceptions`
 
 //THE COLLECTION SHOULDN'T ONLY BE CMU IT SHOULD BE BASED OFF SCHOOL, IF THE COLLECTION DOESN"T EXIST, IT SHOULD CREATE IT!!!.
 
 //Middleware
 
+app.use(cors(corsOptions));
+
 passport.serializeUser(function (user, done) {
+  console.log("Serializing user id: ");
+  console.log(user._id);
   done(null, user._id);
 });
 
-passport.deserializeUser(function (id, done) {
-  let user = findUserById(id);
+passport.deserializeUser(async function (id, done) {
+  console.log("Deserializing user id: ");
+  console.log(id);
+  let user = await findUserById(id);
+  console.log("Deserializing user: ");
+  console.log(user);
   done(null, user);
 });
 
@@ -94,10 +125,10 @@ passport.use(
       clientSecret: GOOGLE_CLIENT_SECRET,
       callbackURL: "/auth/google/callback",
     },
-    function (accessToken, refreshToken, profile, done) {
+    async function (accessToken, refreshToken, profile, done) {
       //Have to define this function
       console.log(profile);
-      let result = findOrCreateUser(profile);
+      let result = await findOrCreateUser(profile);
       done(null, result);
     }
   )
@@ -110,11 +141,14 @@ app.use(
   })
 );
 
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Credentials", true);
+  next();
+});
+
 app.use(passport.initialize());
 
 app.use(passport.session());
-
-app.use(cors());
 
 app.use(express.json());
 
@@ -133,7 +167,7 @@ app.get(
   function (req, res) {
     let user = req.user;
     if (user.exists) {
-      res.redirect("/match");
+      res.redirect("http://localhost:3000/match");
     } else {
       res.redirect("/newlogout");
     }
@@ -143,7 +177,7 @@ app.get(
 app.get("/newlogout", (req, res) => {
   console.log("hit log out call");
   req.logout();
-  res.redirect("/register");
+  res.redirect("htpp://localhost:3000/register");
 });
 
 start();

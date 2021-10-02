@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage/LoginPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import PlanBRegisterPage from "./pages/PlanBRegisterPage/PlanBRegisterPage";
 import ProfilePage from "./pages/ProfilePage/ProfilePage";
+import MatchPage from "./pages/MatchPage/MatchPage";
 // import SwipePage from "./pages/SwipePage/SwipePage";
 
 function App() {
@@ -25,6 +26,9 @@ function App() {
       </Route>
       <Route path="/profile">
         <ProfilePage />
+      </Route>
+      <Route path="/match">
+        <MatchPage />
       </Route>
     </BrowserRouter>
   );
