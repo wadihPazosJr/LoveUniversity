@@ -443,7 +443,7 @@ function PlanBRegisterPage(props) {
             >
               <option>What sexual orientation do you identify with?</option>
               <option value="heterosexual">Hetersexual</option>
-              <option value="homoseual">Homosexual</option>
+              <option value="homosexual">Homosexual</option>
               <option value="bisexual">Bisexual</option>
               <option className="mb-4" value="other">
                 Other

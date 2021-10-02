@@ -25,11 +25,13 @@ const start = () => {
     console.log(`Listening on port ${PORT}`);
   });
 
-  client.connect((err) => {
-    userCollection = client.db("love-university").collection("cmu");
-  });
+  try {
+    client.connect((err) => {
+      userCollection = client.db("love-university").collection("cmu");
+    });
 
-  console.log("Connected to MongoDB!");
+    console.log("Connected to MongoDB!");
+  } catch (err) {}
 };
 
 const { MongoClient } = require("mongodb");
@@ -42,39 +44,43 @@ const client = new MongoClient(MONGO_URI, {
 
 //Looks for a user, if it doesn't exist, send them to create an account, if they do log them in.
 const findOrCreateUser = async (profile) => {
-  console.log(profile);
-  console.log(profile._json.email);
-  let searchResult = await userCollection.findOne({
-    "contactInfo.email": profile._json.email,
-  });
-  //Search the database, and see if they exist within the db
-  //If they don't create a new entry in the database, with their email, and have a value that says that they are new
-  console.log(searchResult);
-  if (searchResult) {
-    searchResult.exists = true;
-    return searchResult;
-  } else {
-    //Happens if they don't exist in the database
-    return {
-      exists: false,
-    };
-  }
-  //If they do exist, then just return the user.
+  try {
+    console.log(profile);
+    console.log(profile._json.email);
+    let searchResult = await userCollection.findOne({
+      "contactInfo.email": profile._json.email,
+    });
+    //Search the database, and see if they exist within the db
+    //If they don't create a new entry in the database, with their email, and have a value that says that they are new
+    console.log(searchResult);
+    if (searchResult) {
+      searchResult.exists = true;
+      return searchResult;
+    } else {
+      //Happens if they don't exist in the database
+      return {
+        exists: false,
+      };
+    }
+    //If they do exist, then just return the user.
+  } catch (err) {}
 };
 
 const findUserById = async (id) => {
-  console.log(id);
-  let searchResult = await userCollection.findOne({
-    _id: new ObjectID(id),
-  });
-  console.log(searchResult);
+  try {
+    console.log(id);
+    let searchResult = await userCollection.findOne({
+      _id: new ObjectID(id),
+    });
+    console.log(searchResult);
 
-  if (searchResult) {
-    searchResult.exists = true;
-    return searchResult;
-  } else {
-    return { exists: false };
-  }
+    if (searchResult) {
+      searchResult.exists = true;
+      return searchResult;
+    } else {
+      return { exists: false };
+    }
+  } catch (err) {}
 };
 
 const corsOptions = {
@@ -108,12 +114,16 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(async function (id, done) {
-  console.log("Deserializing user id: ");
-  console.log(id);
-  let user = await findUserById(id);
-  console.log("Deserializing user: ");
-  console.log(user);
-  done(null, user);
+  try {
+    console.log("Deserializing user id: ");
+    console.log(id);
+    let user = await findUserById(id);
+    console.log("Deserializing user: ");
+    console.log(user);
+    done(null, user);
+  } catch (err) {
+    console.log(err);
+  }
 });
 
 passport.use(

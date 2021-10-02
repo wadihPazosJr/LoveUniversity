@@ -13,15 +13,18 @@ function Swiper(props) {
   };
 
   return (
-    <div>
-      <h1>{props.name}</h1>
-      <h1>{props.university}</h1>
-      <h1>{props.major}</h1>
-      <h1>{listActivitiesOrHobbies(props.hobbies)}</h1>
-      <h1>{props.greek}</h1>
-      <h1>{props.orientation}</h1>
-      <h1>{props.age}</h1>
-      <p>{props.bio}</p>
+    <div className="card w-75 mt-5">
+      <p className="card-title">{props.name}</p>
+      <p className="card-text">{props.age} years old</p>
+      <p className="card-text">Gender: {props.gender}</p>
+      <p className="card-text">attends {props.university}</p>
+      <p className="card-text">majors in {props.major}</p>
+      <p className="card-text">
+        Hobbies: {listActivitiesOrHobbies(props.hobbies)}
+      </p>
+      <p className="card-text">is a memeber of {props.greek}</p>
+      <p className="card-text">Sexual orientation: {props.orientation}</p>
+      <p className="card-text">Bio: {props.bio}</p>
     </div>
   );
 }

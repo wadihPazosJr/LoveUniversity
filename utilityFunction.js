@@ -1,13 +1,16 @@
+//DOES THIS EVEN WORK?
 const calculateHobbiesOrActivitiesScore = (hobbies1, hobbies2) => {
   let count = 0;
 
-  hobbies1.foreach((hobby) => {
+  hobbies1.forEach((hobby) => {
     if (hobbies2.indexOf(hobby) !== -1) {
       count++;
     }
   });
-};
 
+  return count * 200;
+};
+//DOES THIS EVEN WORK?
 const calculateAgeScore = (age1, age2) => {
   const age1tens = Math.floor(age1 / 10);
 
@@ -21,67 +24,40 @@ const calculateAgeScore = (age1, age2) => {
   return ageCalculation > 400 ? 400 : Math.floor(ageCalculation);
 };
 
+//DOES THIS EVEN WORK?
 const calculateBioScore = (string1, string2) => {
   let list1 = string1.split(" ");
   let list2 = string2.split(" ");
-  let counter = 0;
-  let total = 0;
-  for (i = 0; i < list1.length; i++) {
-    for (j = 0; j < list2.length; j++) {
-      counter = 0;
-      while (list1[i] == list2[j]) {
-        counter++;
-        i++;
-        j++;
-        if (i >= list1.length || j >= list2.length) {
-          break;
-        }
-      }
-      //Summation of the number of elements which are the same
-      for (i = 0; i < counter; i++) {
-        total += 3 * counter;
-      }
+  let count = 0;
+  list2.forEach((word) => {
+    if (list1.indexOf(word) !== -1) {
+      count += 5;
     }
-  }
-  return total;
-};
-
-const assignScoresAndSort = (
-  arrayOfPeople,
-  hobbiesArr,
-  activitiesArr,
-  age,
-  bio,
-  major
-) => {
-  arrayOfPeople.forEach((p1) => {
-    arrayOfPeople.forEach((p2) => {
-      if (p1 != p2) {
-        let compatabilityScore = 0;
-        compatabilityScore += calculateHobbiesOrActivitiesScore(
-          p1.datingInfo.hobbies,
-          p2.datingInfo.hobbies
-        );
-        compatabilityScore += calculateHobbiesOrActivitiesScore(
-          p1.schoolInfo.activities,
-          p2.schoolInfo.activities
-        );
-        compatabilityScore += calculateAgeScore(
-          p1.datingInfo.age,
-          p2.datingInfo.age
-        );
-        compatabilityScore += calculateBioScore(
-          p1.datingInfo.bio,
-          p2.datingInfo.bio
-        );
-        p2.compatabilityScore = compatabilityScore;
-        arrayOfPeople.sort(
-          (p1, p2) => p1.compatabilityScore - p2.compatabilityScore
-        );
-      }
-    });
   });
-  return arrayOfPeople;
+  return count;
 };
 
-module.exports = { assignScoresAndSort };
+const assignScores = (subject, newPotentialMatches) => {
+  let clone = [...newPotentialMatches];
+
+  clone.forEach((match) => {
+    let ageScore = calculateAgeScore(
+      subject.datingInfo.age,
+      match.datingInfo.age
+    );
+    let bioScore = calculateBioScore(
+      subject.datingInfo.bio,
+      match.datingInfo.bio
+    );
+    let hobbiesScore = calculateHobbiesOrActivitiesScore(
+      subject.datingInfo.hobbies,
+      match.datingInfo.hobbies
+    );
+
+    match.compatibilityScore = ageScore + bioScore + hobbiesScore;
+  });
+
+  return clone;
+};
+
+module.exports = { assignScores };

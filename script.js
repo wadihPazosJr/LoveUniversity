@@ -9,6 +9,8 @@ const client = new MongoClient(MONGO_URI, {
   useUnifiedTopology: true,
 });
 
+const ObjectID = require("mongodb").ObjectID;
+
 const hobbies = [
   "3D printing",
   "Amateur radio",
@@ -289,7 +291,12 @@ function createRandom500People() {
   let returnVal = [];
 
   for (let i = 0; i < 500; i++) {
-    returnVal.push(createRandomPerson());
+    let randomPerson = createRandomPerson();
+    if (i < 5)
+      randomPerson.datingInfo.rightSwipes.push(
+        new ObjectID("6158e8a6dfbf20e631f08b57")
+      );
+    returnVal.push(randomPerson);
   }
 
   return returnVal;
