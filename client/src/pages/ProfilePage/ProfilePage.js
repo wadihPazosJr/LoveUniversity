@@ -217,6 +217,7 @@ function PlanBRegisterPage(props) {
           orientation: res.data.datingInfo.orientation,
           age: res.data.datingInfo.age,
           dob: res.data.datingInfo.dob,
+          gender: res.data.datingInfo.gender,
         });
       })
       .catch((err) => console.log(err));
@@ -295,14 +296,16 @@ function PlanBRegisterPage(props) {
       },
     };
     axios
-      .put("/user/update", reqBody, { withCredentials: true })
+      .put("/user/update", reqBody, {
+        withCredentials: true,
+      })
       .then((res) => {
         console.log(res.data);
         if (res.data.success) {
-          window.location.refresh();
+          window.location.reload();
         } else {
           alert("Something went wrong, please try again later.");
-          window.location.refresh();
+          window.location.reload();
         }
       })
       .catch((error) => console.error(error));
@@ -417,6 +420,7 @@ function PlanBRegisterPage(props) {
               onChange={handleChange("gender")}
               className="mb-4"
               aria-label="gender"
+              value={values.gender}
               onChange={handleChange("gender")}
             >
               <option>What gender do you identify as?</option>
@@ -488,50 +492,68 @@ function PlanBRegisterPage(props) {
             Edit
           </Button>
           <Form.Label className="mt-5">Name</Form.Label>
-          <div className="card text-white bg-secondary">{values.name}</div>
+          <div className="rounded card-body text-white bg-secondary">
+            {values.name}
+          </div>
 
           <Form.Label className="mt-4">Email</Form.Label>
-          <div className="card text-white bg-secondary">{values.email}</div>
+          <div className="rounded card-body text-white bg-secondary">
+            {values.email}
+          </div>
 
           <Form.Label className="mt-4">Phone Number</Form.Label>
-          <div className="card text-white bg-secondary">{values.phone}</div>
+          <div className="rounded card-body text-white bg-secondary">
+            {values.phone}
+          </div>
 
           <Form.Label className="mt-4">University</Form.Label>
-          <div className="card text-white bg-secondary">
+          <div className="rounded card-body text-white bg-secondary">
             {values.university}
           </div>
 
           <Form.Label className="mt-4">Major</Form.Label>
-          <div className="card text-white bg-secondary">{values.major}</div>
+          <div className="rounded card-body text-white bg-secondary">
+            {values.major}
+          </div>
 
           <Form.Label className="mt-4">Greek Life</Form.Label>
-          <div className="card text-white bg-secondary">{values.greek}</div>
+          <div className="rounded card-body text-white bg-secondary">
+            {values.greek}
+          </div>
 
           <Form.Label className="mt-4">Hobbies</Form.Label>
-          <div className="card text-white bg-secondary">
+          <div className="rounded card-body text-white bg-secondary">
             <ul>
-              {values.hobbies.map((el) => {
-                return <li>{el}</li>;
+              {values.hobbies.map((el, i) => {
+                return <li key={i}>{el}</li>;
               })}
             </ul>
           </div>
 
           <Form.Label className="mt-4">Bio</Form.Label>
-          <div className="card text-white bg-secondary">{values.bio}</div>
+          <div className="rounded card-body text-white bg-secondary">
+            {values.bio}
+          </div>
 
           <Form.Label className="mt-4">Gender</Form.Label>
-          <div className="card text-white bg-secondary">{values.gender}</div>
+          <div className="rounded card-body text-white bg-secondary">
+            {values.gender}
+          </div>
 
           <Form.Label className="mt-4">Sexual Orientation</Form.Label>
-          <div className="card text-white bg-secondary">
+          <div className="rounded card-body text-white bg-secondary">
             {values.orientation}
           </div>
 
           <Form.Label className="mt-4">Age</Form.Label>
-          <div className="card text-white bg-secondary">{values.age}</div>
+          <div className="rounded card-body text-white bg-secondary">
+            {values.age}
+          </div>
 
           <Form.Label className="mt-4">Date of Birth</Form.Label>
-          <div className="card text-white bg-secondary">{values.dob}</div>
+          <div className="rounded card-body text-white bg-secondary">
+            {values.dob}
+          </div>
         </div>
       )}
     </div>

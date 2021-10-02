@@ -2,7 +2,7 @@ import Button from "react-bootstrap/Button";
 import { useState } from "react";
 import Form from "react-bootstrap/Form";
 import "./LoginPage.css";
-import Image from "react-bootstrap/Image";
+// import mainLogo from "images/loveUniLogo.jpg";
 
 function LoginPage(props) {
   const [email, setEmail] = useState("");
@@ -18,7 +18,7 @@ function LoginPage(props) {
 
   return (
     <div className="loginPageTop">
-      {/* <img src="./images/loveUniLogo.png" alt="logo" /> */}
+      {/* <img src={mainLogo} alt="logo" /> */}
       <div className="loginContainer d-flex justify-content-center align-items-center">
         <div className="card">
           <h1>Login</h1>

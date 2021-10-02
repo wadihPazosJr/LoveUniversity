@@ -9,14 +9,21 @@ function SwipePage(props) {
   const [state, setState] = useState({
     counter: 0,
     candidatesArr: [],
-    loading: false,
+    loading: true,
   });
 
+  console.log(state);
   const getTop10 = async () => {
-    setState({ loading: true });
-    await axios("/top10", { withCredentials: true }).then((res) => {
-      setState({ candidatesArr: res.data.top10 });
-      setState({ loading: false });
+    await axios("/user/top10", { withCredentials: true }).then((res) => {
+      console.log(res.data);
+      setState(
+        {
+          candidatesArr: res.data.top10,
+          loading: false,
+          counter: 0,
+        },
+        console.log(state)
+      );
     });
   };
 
@@ -76,19 +83,30 @@ function SwipePage(props) {
     //otherwise just increment the counter
   };
 
+  // if (state.candidatesArr.length === 0) {
+  //   return <h1>Sorry you hvae no more pdaple to swipe on</h1>;
+  // }
+
   return (
     <div>
-      {/* <NavBar /> */}
-      <Swiper
-        name={state.candidatesArr[state.counter].name}
-        university={state.candidatesArr[state.counter].schoolInfo.university}
-        major={state.candidatesArr[state.counter].schoolInfo.major}
-        hobbies={state.candidatesArr[state.counter].datingInfo.hobbies}
-        greek={state.candidatesArr[state.counter].schoolInfo.greek}
-        orientation={state.candidatesArr[state.counter].datingInfo.orientation}
-        age={state.candidatesArr[state.counter].datingInfo.age}
-        bio={state.candidatesArr[state.counter].datingInfo.bio}
-      />
+      {state.loading ? (
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      ) : (
+        <Swiper
+          name={state.candidatesArr[state.counter].name}
+          university={state.candidatesArr[state.counter].schoolInfo.university}
+          major={state.candidatesArr[state.counter].schoolInfo.major}
+          hobbies={state.candidatesArr[state.counter].datingInfo.hobbies}
+          greek={state.candidatesArr[state.counter].schoolInfo.greek}
+          orientation={
+            state.candidatesArr[state.counter].datingInfo.orientation
+          }
+          age={state.candidatesArr[state.counter].datingInfo.age}
+          bio={state.candidatesArr[state.counter].datingInfo.bio}
+        />
+      )}
       <button onClick={handleLeftSwipe}>Left Swipe</button>
       <button onClick={handleRightSwipe}>Right Swipe</button>
     </div>

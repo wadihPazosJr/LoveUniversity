@@ -101,8 +101,6 @@ const isLoggedIn = (req, res, next) => {
 
 //Middleware
 
-app.use(cors(corsOptions));
-
 passport.serializeUser(function (user, done) {
   console.log("Serializing user id: ");
   console.log(user._id);
@@ -133,6 +131,8 @@ passport.use(
     }
   )
 );
+
+app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
 
 app.use(
   cookieSession({

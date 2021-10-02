@@ -72,7 +72,7 @@ app.post("/create", async (req, res) => {
 //NEEDS REVIEW FIX THIS
 app.put("/update", async (req, res) => {
   try {
-    await db.collection.findOneAndReplace(
+    await userCollection.findOneAndReplace(
       { _id: new ObjectID(req.user._id) },
       req.body
     );
@@ -197,7 +197,40 @@ app.get("/top10", async (req, res) => {
 
     let newPotentialLength = newPotentialMatchesScoresSorted.length;
 
+    let userOreintation = req.user.datingInfo.orientation;
+    let userGender = req.user.datingInfo.orientation;
+    let userUndesiredGender = [];
+    let userUndesiredOrientation = [];
+
+    if (userOreintation === "homosexual") {
+      if (userGender === "male") {
+        userUndesiredGender = ["female", "other"];
+        userUndesiredOrientation = ["heterosexual"];
+      }
+      if (userGender === "female") {
+        userUndesiredGender = ["male", "other"];
+        userUndesiredOrientation = ["hetersexual"];
+      }
+    }
+    if (userOreintation === "hetersexual") {
+      if (userGender === "male") {
+        userUndesiredGender = ["male"];
+      }
+      if (userGender === "female") {
+        userUndesiredGender = ["female"];
+      }
+    }
+    if (userOreintation === "bisexual") {
+      if (userGender === "male")
+        userUndesiredOrientation = [["female", "homosexual"]];
+      if (userGender === "female") {
+        userUndesiredOrientation = [["male", "homosexual"]];
+      }
+    }
+
     //Finds a users desired gender and sexual orientation
+    //BACKUKP ALGORITHM (DOESN'T REALLY WORK)
+    /*
     let userOrientation = req.user.orientation;
     let userTargetGender = "both";
     let userTargetOrientation = "both";
@@ -214,13 +247,25 @@ app.get("/top10", async (req, res) => {
       }
       if (userOrientation === "bisexual") {
         //ADD FOR BISEXUAL DESIRED ORIENTATION AND GENDER
+
       }
     }
+  */
 
-    //Removes all users who dont match the target gender and sexual orientation
+    //Removes all users who dont match the desired gender and sexual orientation
+    index = 0;
     newPotentialMatchesScoresSorted.forEach((person) => {
-      if (person.datingInfo.gender != userTargetGender) {
-        newPotentialMatchesScoresSorted.splice();
+      if (
+        userUndesiredGender.indcludes(person.datingInfo.gender) ||
+        userUndesiredOrientation.includes(person.datingInfo.orientation) ||
+        userUndesiredOrientation.includes([
+          person.datingInfo.gender,
+          person.datingInfo.orientation,
+        ])
+      ) {
+        newPotentialMatchesScoresSorted.splice(index, 1);
+      } else {
+        index++;
       }
     });
     // let index2 = 0;
